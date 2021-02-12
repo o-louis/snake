@@ -1,7 +1,6 @@
 <template>
   <div id="app">
     <Board :width="board.width" :height="board.height" :color="board.color" />
-    <button @click="clearBoard">clear</button>
   </div>
 </template>
 
@@ -17,23 +16,16 @@ export default {
     return {
       ctx: null,
       canvas: "",
+      speed: 140,
       snake: {
         size: 20,
         color: "green",
-        pos: [
-          {
-            x: 0,
-            y: 0,
-          },
-        ],
+        pos: [],
       },
       apple: {
         size: 20,
         color: "red",
-        pos: {
-          x: 0,
-          y: 0,
-        },
+        pos: {},
       },
       board: {
         width: 1200,
@@ -56,6 +48,8 @@ export default {
   },
   methods: {
     initGame() {
+      this.snake.pos = [];
+      this.apple.pos = {};
       this.initSnake();
       this.initFood();
     },
@@ -89,35 +83,46 @@ export default {
     },
     handleDirection() {
       const _this = this;
+      let timer = null;
       document.addEventListener("keydown", (e) => {
-        let { x, y } = _this.snake.pos[0];
-        const lastPos = { x, y };
+        clearInterval(timer);
+        const direction = () => {
+          let { x, y } = _this.snake.pos[0];
+          const lastPos = { x, y };
 
-        switch (e.key) {
-          case "ArrowLeft":
-            x = x - this.snake.size >= 0 ? x - this.snake.size : 0;
-            break;
-          case "ArrowRight":
-            x =
-              x + this.snake.size < this.board.width ? x + this.snake.size : x;
-            break;
-          case "ArrowUp":
-            y = y - this.snake.size >= 0 ? y - this.snake.size : 0;
-            break;
-          case "ArrowDown":
-            y =
-              y + this.snake.size < this.board.height ? y + this.snake.size : y;
-            break;
-          default:
-        }
+          switch (e.key) {
+            case "ArrowLeft":
+              x = x - _this.snake.size >= 0 ? x - _this.snake.size : 0;
+              break;
+            case "ArrowRight":
+              x =
+                x + _this.snake.size < _this.board.width
+                  ? x + _this.snake.size
+                  : x;
+              break;
+            case "ArrowUp":
+              y = y - _this.snake.size >= 0 ? y - _this.snake.size : 0;
+              break;
+            case "ArrowDown":
+              y =
+                y + _this.snake.size < _this.board.height
+                  ? y + _this.snake.size
+                  : y;
+              break;
+            default:
+          }
 
-        if (lastPos.x !== x || lastPos.y !== y) {
-          _this.updateDirection({ x, y });
-        } else {
-          /* Game over and start the game again when it reaches the border */
-          _this.clearBoard();
-          _this.initGame();
-        }
+          if (lastPos.x !== x || lastPos.y !== y) {
+            _this.updateDirection({ x, y });
+          } else {
+            /* Game over and restart the game when it reaches the border */
+            clearInterval(timer);
+            _this.clearBoard();
+            _this.initGame();
+          }
+        };
+        /* Speed */
+        timer = _this.setSpeed(direction, timer);
       });
     },
     updateDirection({ x, y }) {
@@ -131,6 +136,9 @@ export default {
         this.snake.pos.pop();
       }
       this.drawSnake();
+    },
+    setSpeed(fn) {
+      return setInterval(fn, this.speed);
     },
     isFoodEaten({ x, y }) {
       return x === this.apple.pos.x && y === this.apple.pos.y;
