@@ -22,7 +22,7 @@ export default {
         color: "green",
         pos: [],
       },
-      apple: {
+      food: {
         size: 20,
         color: "red",
         pos: {},
@@ -49,7 +49,7 @@ export default {
   methods: {
     initGame() {
       this.snake.pos = [];
-      this.apple.pos = {};
+      this.food.pos = {};
       this.initSnake();
       this.initFood();
     },
@@ -58,8 +58,8 @@ export default {
       this.drawSnake();
     },
     initFood() {
-      this.apple.pos = this.getRandomPosition();
-      this.drawApple();
+      this.food.pos = this.getRandomPosition();
+      this.drawfood();
     },
     clearBoard() {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -72,13 +72,13 @@ export default {
         this.ctx.fillRect(pos.x, pos.y, this.snake.size, this.snake.size);
       });
     },
-    drawApple() {
-      this.ctx.fillStyle = this.apple.color;
+    drawfood() {
+      this.ctx.fillStyle = this.food.color;
       this.ctx.fillRect(
-        this.apple.pos.x,
-        this.apple.pos.y,
-        this.apple.size,
-        this.apple.size
+        this.food.pos.x,
+        this.food.pos.y,
+        this.food.size,
+        this.food.size
       );
     },
     handleDirection() {
@@ -131,7 +131,7 @@ export default {
       if (this.isFoodEaten({ x, y })) {
         this.initFood();
       } else {
-        this.drawApple();
+        this.drawfood();
         this.snake.pos[0] = { x, y };
         this.snake.pos.pop();
       }
@@ -141,7 +141,7 @@ export default {
       return setInterval(fn, this.speed);
     },
     isFoodEaten({ x, y }) {
-      return x === this.apple.pos.x && y === this.apple.pos.y;
+      return x === this.food.pos.x && y === this.food.pos.y;
     },
     getRandomPosition() {
       const x =
@@ -151,7 +151,7 @@ export default {
 
       if (this.snake.pos[0].x === x && this.snake.pos[0].y === y)
         this.getRandomPosition();
-      if (this.apple.pos.x === x && this.apple.pos.y === y)
+      if (this.food.pos.x === x && this.food.pos.y === y)
         this.getRandomPosition();
 
       return { x, y };
