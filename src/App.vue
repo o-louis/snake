@@ -45,18 +45,19 @@ export default {
     };
   },
   mounted() {
+    this.canvas = document.querySelector("#board");
+    this.ctx = this.canvas.getContext("2d");
+
+    this.board.widthRect = this.board.width / this.snake.size;
+    this.board.heightRect = this.board.height / this.snake.size;
+
     this.initGame();
-    this.initSnake();
-    this.initFood();
     this.handleDirection();
   },
   methods: {
     initGame() {
-      this.canvas = document.querySelector("#board");
-      this.ctx = this.canvas.getContext("2d");
-
-      this.board.widthRect = this.board.width / this.snake.size;
-      this.board.heightRect = this.board.height / this.snake.size;
+      this.initSnake();
+      this.initFood();
     },
     initSnake() {
       this.snake.pos[0] = this.getRandomPosition();
@@ -91,6 +92,7 @@ export default {
       document.addEventListener("keydown", (e) => {
         let { x, y } = _this.snake.pos[0];
         const lastPos = { x, y };
+
         switch (e.key) {
           case "ArrowLeft":
             x = x - this.snake.size >= 0 ? x - this.snake.size : 0;
@@ -111,6 +113,10 @@ export default {
 
         if (lastPos.x !== x || lastPos.y !== y) {
           _this.updateDirection({ x, y });
+        } else {
+          /* Game over and start the game again when it reaches the border */
+          _this.clearBoard();
+          _this.initGame();
         }
       });
     },
