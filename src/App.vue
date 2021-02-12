@@ -110,9 +110,19 @@ export default {
         }
         _this.snake.pos = { x, y };
         _this.clearBoard();
+        if (_this.isFoodEaten()) {
+          this.initFood();
+        } else {
+          _this.drawApple();
+        }
         _this.drawSnake();
-        _this.drawApple();
       });
+    },
+    isFoodEaten() {
+      return (
+        this.snake.pos.x === this.apple.pos.x &&
+        this.snake.pos.y === this.apple.pos.y
+      );
     },
     getRandomPosition() {
       const x =
