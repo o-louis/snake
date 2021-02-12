@@ -25,6 +25,14 @@ export default {
           y: 0,
         },
       },
+      apple: {
+        size: 20,
+        color: "red",
+        pos: {
+          x: 0,
+          y: 0,
+        },
+      },
       board: {
         width: 1200,
         height: 500,
@@ -35,31 +43,48 @@ export default {
     };
   },
   mounted() {
-    this.canvas = document.querySelector("#board");
-    this.ctx = this.canvas.getContext("2d");
-
-    this.board.widthRect = this.board.width / this.snake.size;
-    this.board.heightRect = this.board.height / this.snake.size;
-
-    this.snake.pos = this.getRandomPosition();
-    this.drawSnake();
-
+    this.initGame();
+    this.initSnake();
+    this.initFood();
     this.handleDirection();
   },
   methods: {
+    initGame() {
+      this.canvas = document.querySelector("#board");
+      this.ctx = this.canvas.getContext("2d");
+
+      this.board.widthRect = this.board.width / this.snake.size;
+      this.board.heightRect = this.board.height / this.snake.size;
+    },
+    initSnake() {
+      this.snake.pos = this.getRandomPosition();
+      this.drawSnake();
+    },
+    initFood() {
+      this.apple.pos = this.getRandomPosition();
+      this.drawApple();
+    },
     clearBoard() {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.ctx.fillStyle = this.board.color;
       this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     },
     drawSnake() {
-      this.clearBoard();
       this.ctx.fillStyle = this.snake.color;
       this.ctx.fillRect(
         this.snake.pos.x,
         this.snake.pos.y,
         this.snake.size,
         this.snake.size
+      );
+    },
+    drawApple() {
+      this.ctx.fillStyle = this.apple.color;
+      this.ctx.fillRect(
+        this.apple.pos.x,
+        this.apple.pos.y,
+        this.apple.size,
+        this.apple.size
       );
     },
     handleDirection() {
@@ -84,7 +109,9 @@ export default {
           default:
         }
         _this.snake.pos = { x, y };
+        _this.clearBoard();
         _this.drawSnake();
+        _this.drawApple();
       });
     },
     getRandomPosition() {
@@ -92,6 +119,10 @@ export default {
         Math.floor(Math.random() * this.board.widthRect) * this.snake.size;
       const y =
         Math.floor(Math.random() * this.board.heightRect) * this.snake.size;
+
+      if (this.snake.pos === { x, y }) this.getRandomPosition();
+      if (this.apple.pos === { x, y }) this.getRandomPosition();
+
       return { x, y };
     },
   },
