@@ -90,6 +90,7 @@ export default {
       const _this = this;
       document.addEventListener("keydown", (e) => {
         let { x, y } = _this.snake.pos[0];
+        const lastPos = { x, y };
         switch (e.key) {
           case "ArrowLeft":
             x = x - this.snake.size >= 0 ? x - this.snake.size : 0;
@@ -108,17 +109,22 @@ export default {
           default:
         }
 
-        _this.clearBoard();
-        _this.snake.pos.unshift({ x, y });
-        if (_this.isFoodEaten({ x, y })) {
-          this.initFood();
-        } else {
-          _this.drawApple();
-          _this.snake.pos[0] = { x, y };
-          _this.snake.pos.pop();
+        if (lastPos.x !== x || lastPos.y !== y) {
+          _this.updateDirection({ x, y });
         }
-        _this.drawSnake();
       });
+    },
+    updateDirection({ x, y }) {
+      this.snake.pos.unshift({ x, y });
+      this.clearBoard();
+      if (this.isFoodEaten({ x, y })) {
+        this.initFood();
+      } else {
+        this.drawApple();
+        this.snake.pos[0] = { x, y };
+        this.snake.pos.pop();
+      }
+      this.drawSnake();
     },
     isFoodEaten({ x, y }) {
       return x === this.apple.pos.x && y === this.apple.pos.y;
