@@ -149,8 +149,10 @@ export default {
       const y =
         Math.floor(Math.random() * this.board.heightRect) * this.snake.size;
 
-      if (this.snake.pos[0] === { x, y }) this.getRandomPosition();
-      if (this.apple.pos === { x, y }) this.getRandomPosition();
+      if (this.snake.pos[0].x === x && this.snake.pos[0].y === y)
+        this.getRandomPosition();
+      if (this.apple.pos.x === x && this.apple.pos.y === y)
+        this.getRandomPosition();
 
       return { x, y };
     },
