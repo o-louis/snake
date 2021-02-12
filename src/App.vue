@@ -48,8 +48,8 @@ export default {
   },
   methods: {
     initGame() {
-      this.snake.pos = [];
-      this.food.pos = {};
+      this.snake.pos = [{ x: 0, y: 0 }];
+      this.food.pos = { x: 0, y: 0 };
       this.initSnake();
       this.initFood();
     },
