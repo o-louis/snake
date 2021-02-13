@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <h1>SNAKE</h1>
-    <p class="best score">Best Score: {{ score }}</p>
+    <p class="best score">Best Score: {{ bestScore }}</p>
     <p class="score">Score: {{ score }}</p>
     <Board :width="board.width" :height="board.height" :color="board.color" />
   </div>
@@ -21,6 +21,7 @@ export default {
       canvas: "",
       speed: 130,
       score: 0,
+      scores: [0],
       snake: {
         size: 20,
         color: "#ff9a00",
@@ -52,6 +53,11 @@ export default {
     this.initGame();
     this.getDirection();
     this.setSpeed(this.game);
+  },
+  computed: {
+    bestScore() {
+      return Math.max(...this.scores);
+    },
   },
   methods: {
     initGame() {
@@ -162,6 +168,7 @@ export default {
       return x === this.food.pos.x && y === this.food.pos.y;
     },
     restartGame() {
+      this.scores.push(this.score);
       this.start = false;
       this.score = 0;
       clearInterval(this.timer);
