@@ -69,6 +69,9 @@ export default {
       this.snake.pos.forEach((pos) => {
         this.ctx.fillStyle = this.snake.color;
         this.ctx.fillRect(pos.x, pos.y, this.snake.size, this.snake.size);
+
+        this.ctx.strokeStyle = "black";
+        this.ctx.strokeRect(pos.x, pos.y, this.snake.size, this.snake.size);
       });
     },
     drawfood() {
