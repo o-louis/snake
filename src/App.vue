@@ -49,6 +49,7 @@ export default {
     this.canvas = document.querySelector("#board");
     this.ctx = this.canvas.getContext("2d");
 
+    this.scores = this.getLocalScore();
     this.board.widthRect = this.board.width / this.snake.size;
     this.board.heightRect = this.board.height / this.snake.size;
 
@@ -170,13 +171,22 @@ export default {
       return x === this.food.pos.x && y === this.food.pos.y;
     },
     restartGame() {
-      this.scores.push(this.score);
+      this.saveScore();
       this.start = false;
       this.score = 0;
       clearInterval(this.timer);
       this.clearBoard();
       this.initGame();
       this.setSpeed(this.game);
+    },
+    getLocalScore() {
+      const scores = localStorage.scores;
+      if (scores) return JSON.parse(scores);
+      return [0];
+    },
+    saveScore() {
+      this.scores.push(this.score);
+      localStorage.setItem("scores", JSON.stringify([...new Set(this.scores)]));
     },
   },
 };
