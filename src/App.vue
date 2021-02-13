@@ -1,8 +1,10 @@
 <template>
   <div id="app">
     <h1>SNAKE</h1>
-    <p class="best score">Best Score: {{ bestScore }}</p>
-    <p class="score">Score: {{ score }}</p>
+    <section>
+      <p class="best score">Best Score: {{ bestScore }}</p>
+      <p class="score">Score: {{ score }}</p>
+    </section>
     <Board :width="board.width" :height="board.height" :color="board.color" />
   </div>
 </template>
@@ -205,9 +207,13 @@ h1 {
   letter-spacing: 13px;
 }
 
+section {
+  display: flex;
+  justify-content: space-between;
+}
+
 .score {
   font-size: 30px;
-  text-align: right;
   color: white;
   margin-bottom: 24px;
 }
