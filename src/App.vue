@@ -75,13 +75,18 @@ export default {
       });
     },
     drawfood() {
-      this.ctx.fillStyle = this.food.color;
-      this.ctx.fillRect(
-        this.food.pos.x,
-        this.food.pos.y,
-        this.food.size,
-        this.food.size
+      const radius = this.snake.size / 2;
+      this.ctx.beginPath();
+      this.ctx.arc(
+        this.food.pos.x + radius,
+        this.food.pos.y + radius,
+        radius,
+        0,
+        2 * Math.PI,
+        false
       );
+      this.ctx.fillStyle = this.food.color;
+      this.ctx.fill();
     },
     clearBoard() {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
