@@ -1,6 +1,8 @@
 <template>
   <div id="app">
     <h1>SNAKE</h1>
+    <p class="best score">Best Score: {{ score }}</p>
+    <p class="score">Score: {{ score }}</p>
     <Board :width="board.width" :height="board.height" :color="board.color" />
   </div>
 </template>
@@ -18,6 +20,7 @@ export default {
       ctx: null,
       canvas: "",
       speed: 130,
+      score: 0,
       snake: {
         size: 20,
         color: "#ff9a00",
@@ -102,6 +105,7 @@ export default {
           this.snake.pos.unshift({ x, y });
           this.clearBoard();
           if (this.isFoodEaten({ x, y })) {
+            this.score += 20;
             this.initFood();
           } else {
             this.drawfood();
@@ -159,6 +163,7 @@ export default {
     },
     restartGame() {
       this.start = false;
+      this.score = 0;
       clearInterval(this.timer);
       this.clearBoard();
       this.initGame();
@@ -191,5 +196,17 @@ h1 {
   margin-bottom: 50px;
   font-size: 50px;
   letter-spacing: 13px;
+}
+
+.score {
+  font-size: 30px;
+  text-align: right;
+  color: white;
+  margin-bottom: 24px;
+}
+
+.best {
+  color: #ffb515;
+  margin-bottom: 12px;
 }
 </style>
