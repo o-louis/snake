@@ -49,7 +49,7 @@ export default {
     this.canvas = document.querySelector("#board");
     this.ctx = this.canvas.getContext("2d");
 
-    this.scores = this.getLocalScore();
+    this.scores = this.getLocalScores();
     this.board.widthRect = this.board.width / this.snake.size;
     this.board.heightRect = this.board.height / this.snake.size;
 
@@ -179,7 +179,7 @@ export default {
       this.initGame();
       this.setSpeed(this.game);
     },
-    getLocalScore() {
+    getLocalScores() {
       const scores = localStorage.scores;
       if (scores) return JSON.parse(scores);
       return [0];
