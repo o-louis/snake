@@ -222,6 +222,7 @@ body {
   margin: 0 auto;
   max-width: 1000px;
   width: 100%;
+  overflow: hidden;
 }
 
 h1 {
