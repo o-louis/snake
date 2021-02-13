@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <h1>SNAKE</h1>
     <Board :width="board.width" :height="board.height" :color="board.color" />
   </div>
 </template>
@@ -16,24 +17,26 @@ export default {
     return {
       ctx: null,
       canvas: "",
-      speed: 140,
+      speed: 130,
       snake: {
         size: 20,
-        color: "green",
+        color: "#ff9a00",
         pos: [],
       },
       food: {
         size: 20,
-        color: "red",
+        color: "#ff5700",
         pos: {},
       },
       board: {
-        width: 1200,
+        width: 1000,
         height: 500,
         widthRect: 0,
         heightRect: 0,
-        color: "black",
+        color: "#032535",
       },
+      direction: "ArrowRight",
+      timer: null,
     };
   },
   mounted() {
@@ -44,7 +47,8 @@ export default {
     this.board.heightRect = this.board.height / this.snake.size;
 
     this.initGame();
-    this.handleDirection();
+    this.getDirection();
+    this.setSpeed(this.game);
   },
   methods: {
     initGame() {
@@ -61,11 +65,6 @@ export default {
       this.food.pos = this.getRandomPosition();
       this.drawfood();
     },
-    clearBoard() {
-      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-      this.ctx.fillStyle = this.board.color;
-      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    },
     drawSnake() {
       this.snake.pos.forEach((pos) => {
         this.ctx.fillStyle = this.snake.color;
@@ -81,67 +80,52 @@ export default {
         this.food.size
       );
     },
-    handleDirection() {
-      const _this = this;
-      let timer = null;
-      document.addEventListener("keydown", (e) => {
-        clearInterval(timer);
-        const direction = () => {
-          let { x, y } = _this.snake.pos[0];
-          const lastPos = { x, y };
-
-          switch (e.key) {
-            case "ArrowLeft":
-              x = x - _this.snake.size >= 0 ? x - _this.snake.size : 0;
-              break;
-            case "ArrowRight":
-              x =
-                x + _this.snake.size < _this.board.width
-                  ? x + _this.snake.size
-                  : x;
-              break;
-            case "ArrowUp":
-              y = y - _this.snake.size >= 0 ? y - _this.snake.size : 0;
-              break;
-            case "ArrowDown":
-              y =
-                y + _this.snake.size < _this.board.height
-                  ? y + _this.snake.size
-                  : y;
-              break;
-            default:
-          }
-
-          if (lastPos.x !== x || lastPos.y !== y) {
-            _this.updateDirection({ x, y });
-          } else {
-            /* Game over and restart the game when it reaches the border */
-            clearInterval(timer);
-            _this.clearBoard();
-            _this.initGame();
-          }
-        };
-        /* Speed */
-        timer = _this.setSpeed(direction, timer);
-      });
+    clearBoard() {
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.ctx.fillStyle = this.board.color;
+      this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     },
-    updateDirection({ x, y }) {
-      this.snake.pos.unshift({ x, y });
-      this.clearBoard();
-      if (this.isFoodEaten({ x, y })) {
-        this.initFood();
+    game() {
+      const lastPos = this.snake.pos[0];
+      const { x, y } = this.updatePos(lastPos);
+
+      if (lastPos.x !== x || lastPos.y !== y) {
+        this.snake.pos.unshift({ x, y });
+        this.clearBoard();
+        if (this.isFoodEaten({ x, y })) {
+          this.initFood();
+        } else {
+          this.drawfood();
+          this.snake.pos[0] = { x, y };
+          this.snake.pos.pop();
+        }
+        this.drawSnake();
       } else {
-        this.drawfood();
-        this.snake.pos[0] = { x, y };
-        this.snake.pos.pop();
+        this.restartGame();
       }
-      this.drawSnake();
     },
-    setSpeed(fn) {
-      return setInterval(fn, this.speed);
+    updatePos({ x, y }) {
+      switch (this.direction) {
+        case "ArrowLeft":
+          x = x - this.snake.size >= 0 ? x - this.snake.size : 0;
+          break;
+        case "ArrowRight":
+          x = x + this.snake.size < this.board.width ? x + this.snake.size : x;
+          break;
+        case "ArrowUp":
+          y = y - this.snake.size >= 0 ? y - this.snake.size : 0;
+          break;
+        case "ArrowDown":
+          y = y + this.snake.size < this.board.height ? y + this.snake.size : y;
+          break;
+      }
+      return { x, y };
     },
-    isFoodEaten({ x, y }) {
-      return x === this.food.pos.x && y === this.food.pos.y;
+    getDirection() {
+      const _this = this;
+      document.addEventListener("keydown", (e) => {
+        _this.direction = e.key;
+      });
     },
     getRandomPosition() {
       const x =
@@ -156,8 +140,44 @@ export default {
 
       return { x, y };
     },
+    setSpeed(fn) {
+      this.timer = setInterval(fn, this.speed);
+    },
+    isFoodEaten({ x, y }) {
+      return x === this.food.pos.x && y === this.food.pos.y;
+    },
+    restartGame() {
+      clearInterval(this.timer);
+      this.clearBoard();
+      this.initGame();
+      this.setSpeed(this.game);
+    },
   },
 };
 </script>
 
-<style></style>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400&display=swap");
+* {
+  padding: 0;
+  margin: 0;
+  font-family: "Open Sans", sans-serif;
+  box-sizing: border-box;
+}
+
+body {
+  background: #032535;
+  padding: 30px 0;
+  margin: 0 auto;
+  max-width: 1000px;
+  width: 100%;
+}
+
+h1 {
+  color: #ffb515;
+  text-align: center;
+  margin-bottom: 50px;
+  font-size: 50px;
+  letter-spacing: 13px;
+}
+</style>

@@ -21,6 +21,6 @@ export default {
 
 <style>
 #board {
-  border: 1px solid black;
+  border: 1px solid#ffb515;
 }
 </style>
