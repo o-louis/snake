@@ -37,6 +37,7 @@ export default {
       },
       direction: "ArrowRight",
       timer: null,
+      start: false,
     };
   },
   mounted() {
@@ -89,22 +90,24 @@ export default {
       this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     },
     game() {
-      const lastPos = this.snake.pos[0];
-      const { x, y } = this.updatePos(lastPos);
+      if (this.start) {
+        const lastPos = this.snake.pos[0];
+        const { x, y } = this.updatePos(lastPos);
 
-      if (lastPos.x !== x || lastPos.y !== y) {
-        this.snake.pos.unshift({ x, y });
-        this.clearBoard();
-        if (this.isFoodEaten({ x, y })) {
-          this.initFood();
+        if (lastPos.x !== x || lastPos.y !== y) {
+          this.snake.pos.unshift({ x, y });
+          this.clearBoard();
+          if (this.isFoodEaten({ x, y })) {
+            this.initFood();
+          } else {
+            this.drawfood();
+            this.snake.pos[0] = { x, y };
+            this.snake.pos.pop();
+          }
+          this.drawSnake();
         } else {
-          this.drawfood();
-          this.snake.pos[0] = { x, y };
-          this.snake.pos.pop();
+          this.restartGame();
         }
-        this.drawSnake();
-      } else {
-        this.restartGame();
       }
     },
     updatePos({ x, y }) {
@@ -127,6 +130,7 @@ export default {
     getDirection() {
       const _this = this;
       document.addEventListener("keydown", (e) => {
+        if (!_this.start) _this.start = true;
         _this.direction = e.key;
       });
     },
@@ -150,6 +154,7 @@ export default {
       return x === this.food.pos.x && y === this.food.pos.y;
     },
     restartGame() {
+      this.start = false;
       clearInterval(this.timer);
       this.clearBoard();
       this.initGame();
