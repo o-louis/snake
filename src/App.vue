@@ -21,7 +21,9 @@ export default {
     return {
       ctx: null,
       canvas: "",
-      speed: 130,
+      speed: 300,
+      speedCoefficient: 50,
+      nbFoodEaten: 0,
       score: 0,
       scores: [0],
       snake: {
@@ -115,6 +117,8 @@ export default {
           this.clearBoard();
           if (this.isFoodEaten({ x, y })) {
             this.score += 20;
+            this.nbFoodEaten++;
+            this.speedUp();
             this.initFood();
           } else {
             this.drawfood();
@@ -167,6 +171,15 @@ export default {
     setSpeed(fn) {
       this.timer = setInterval(fn, this.speed);
     },
+    speedUp() {
+      if (this.nbFoodEaten === 3 && this.speed - this.speedCoefficient >= 0) {
+        this.speed -= this.speedCoefficient;
+        if (this.speed >= 101) this.speedCoefficient = 20;
+        this.nbFoodEaten = 0;
+        clearInterval(this.timer);
+        this.setSpeed(this.game);
+      }
+    },
     isFoodEaten({ x, y }) {
       return x === this.food.pos.x && y === this.food.pos.y;
     },
@@ -174,6 +187,8 @@ export default {
       this.saveScore();
       this.start = false;
       this.score = 0;
+      this.speed -= 300;
+      this.nbFoodEaten = 0;
       clearInterval(this.timer);
       this.clearBoard();
       this.initGame();
