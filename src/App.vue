@@ -24,7 +24,6 @@ export default {
         pos: [],
       },
       food: {
-        size: 20,
         color: "#ff5700",
         pos: {},
       },
