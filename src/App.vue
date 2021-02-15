@@ -1,6 +1,17 @@
 <template>
   <div id="app">
     <h1>SNAKE</h1>
+
+    <ul class="colors">
+      <li><p class="color-title">Change the color of the food:</p></li>
+      <li
+        v-for="(color, index) in availableColors"
+        :key="index"
+        @click="updateColor(color)"
+      >
+        <span :style="{ background: color }"></span>
+      </li>
+    </ul>
     <section>
       <p class="best score">Best Score: {{ bestScore }}</p>
       <p class="score">Score: {{ score }}</p>
@@ -37,7 +48,7 @@ export default {
       },
       board: {
         width: 1000,
-        height: 500,
+        height: 400,
         widthRect: 0,
         heightRect: 0,
         color: "#032535",
@@ -45,6 +56,7 @@ export default {
       direction: "ArrowRight",
       timer: null,
       start: false,
+      availableColors: ["red", "yellow", "orange", "brown"],
     };
   },
   mounted() {
@@ -203,6 +215,10 @@ export default {
       this.scores.push(this.score);
       localStorage.setItem("scores", JSON.stringify([...new Set(this.scores)]));
     },
+    updateColor(color) {
+      this.food.color = color;
+      this.drawfood();
+    },
   },
 };
 </script>
@@ -214,6 +230,11 @@ export default {
   margin: 0;
   font-family: "Open Sans", sans-serif;
   box-sizing: border-box;
+}
+
+li {
+  list-style: none;
+  list-style-type: none;
 }
 
 body {
@@ -247,5 +268,24 @@ section {
 .best {
   color: #ffb515;
   margin-bottom: 12px;
+}
+
+ul {
+  display: flex;
+}
+
+.colors li {
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.colors span {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.color-title {
+  color: white;
 }
 </style>
